@@ -45,3 +45,41 @@ This is a simplified educational tool. For a full-featured monitor, tools like *
 ## 🚀 Get it Running
 
 **Create the file:**
+gedit system_monitor.cpp
+(Paste the C++ code from `system_monitor.cpp` into this file, then save & exit)
+
+**Compile it:**
+g++ system_monitor.cpp -o monitor -std=c++11
+
+**Run it:**
+./monitor
+
+**Stop it:** Press `Ctrl+C` in the terminal.
+
+---
+
+## 🔮 Level Up! (Future Goals)
+
+This simple tool could be expanded with more advanced features:
+- 🎨 **UI Overhaul** – Integrate ncurses for a smooth, flicker-free, and interactive dashboard!
+- 🖱️ **Full Interactivity** – Add process killing, new sorting options (by CPU, PID), and scrolling!
+- 🧠 **CPU Stats** – Implement logic to sample CPU times and display a real-time CPU % for each process.
+- 🧑 **User Display** – Show which user is running each process.
+
+---
+
+## ⚙️ How it Works
+
+The monitor loops every 2 seconds, reading and parsing plain text files:
+
+- 📄 `/proc/meminfo` – For global memory stats.
+- 📄 `/proc/loadavg` – For system load.
+- 📁 `/proc/[PID]/` – Scans all process directories for:
+    - `/proc/[PID]/status` (Name, State, VmRSS)
+    - `/proc/[PID]/cmdline` (The full command)
+
+---
+
+## 📢 Stay Tuned!
+
+Feel free to contribute, fork, or suggest improvements! ⭐ Star this repo and follow my journey in C++ development!
