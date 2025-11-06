@@ -1,0 +1,7 @@
+To compile and run this code on a Linux system, you'll need a C++ compiler like g++:
+
+Save the file as system_monitor.cpp.
+
+Open a terminal and compile it: g++ system_monitor.cpp -o monitor -std=c++11
+
+Run the compiled program: ./monitor
