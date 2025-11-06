@@ -1,4 +1,4 @@
-💻 Simple Linux System Monitor 🚀
+#💻 Simple Linux System Monitor 🚀
 
 📊 Monitor. Analyze. Optimize. A lightweight, terminal-based system monitor built with C++—featuring real-time stats, process sorting, and zero external dependencies! 🐧⚡
 
