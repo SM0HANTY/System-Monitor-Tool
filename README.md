@@ -1,8 +1,12 @@
-Simple Linux System Monitor
+💻 Simple Linux System Monitor
 
-This is a basic, read-only system monitoring tool written in C++ for Linux. It mimics some of the core functionality of the top command by reading data directly from the /proc filesystem.
+A basic, read-only system monitoring tool written in C++ for Linux. It mimics some of the core functionality of the top command by reading data directly from the /proc filesystem.
 
-Features
+🎯 Objective
+
+The goal of this project is to create a lightweight, terminal-based utility that provides a real-time, at-a-glance overview of system memory, load, and the most resource-intensive processes.
+
+✨ Features
 
 System Overview: Displays real-time information on:
 
@@ -12,7 +16,7 @@ Free memory (in Gigabytes).
 
 System load averages (1, 5, and 15-minute intervals).
 
-Process List: Lists currently running processes with:
+Process List: Lists the top 25 running processes with:
 
 Process ID (PID)
 
@@ -28,25 +32,25 @@ Sorting: Automatically sorts the process list by memory usage (VmRSS) in descend
 
 Real-time Updates: The display automatically refreshes every 2 seconds.
 
-Limitations
+⚠️ Limitations
 
-This is a simplified educational tool and has some limitations compared to full-featured monitors like top or htop:
+This is a simplified educational tool. For a full-featured and stable monitor, tools like htop or ncurses-based applications are recommended.
 
-Linux Only: It relies on the Linux-specific /proc filesystem and will not compile or run on Windows or macOS.
+Linux Only: It relies entirely on the Linux-specific /proc filesystem and will not compile or run on Windows or macOS.
 
-Read-Only: You cannot interact with the monitor (e.g., kill processes, change sorting, scroll).
+Read-Only & Non-Interactive: You cannot interact with the monitor (e.g., kill processes, change sorting, scroll, or select items).
 
-No Real-time CPU%: Calculating real-time CPU percentage requires comparing process CPU times between intervals. This functionality is omitted for simplicity.
+No Real-time CPU%: Calculating real-time CPU percentage requires sampling process and system CPU times at two different intervals and finding the difference. This functionality is omitted for simplicity.
 
-Basic UI: The tool uses system("clear") to refresh the screen, which can cause flickering. A more advanced tool would use a library like ncurses for a stable terminal UI.
+Basic UI: The tool uses system("clear") to refresh the screen, which is inefficient and can cause flickering. A more advanced tool would use a library like ncurses for a stable, flicker-free terminal UI.
 
-Requirements
+📋 Requirements
 
 A Linux-based operating system.
 
 A C++ compiler (e.g., g++).
 
-How to Compile and Run
+🚀 How to Compile and Run
 
 Create the file:
 Open your terminal and use a text editor like nano to create the file:
@@ -54,7 +58,7 @@ Open your terminal and use a text editor like nano to create the file:
 nano system_monitor.cpp
 
 
-Paste the C++ code into this file. Save and exit (Ctrl+O to save, Ctrl+X to exit).
+Paste the C++ code from system_monitor.cpp into this file. Save and exit (Ctrl+O to save, Ctrl+X to exit).
 
 Compile the program:
 In the same terminal, run the following command to compile the code. This creates an executable file named monitor.
@@ -71,9 +75,25 @@ Execute the compiled program:
 Exit the monitor:
 Press Ctrl+C in the terminal to stop the program.
 
-Code Overview
+🔮 Future Improvements
 
-The program works by reading and parsing plain text files from the /proc directory:
+This simple tool could be expanded with more advanced features:
+
+Implement ncurses: Replace system("clear") with the ncurses library for a smooth, flicker-free, and interactive UI.
+
+Add Interactivity:
+
+Allow killing processes by entering a PID.
+
+Allow sorting by different columns (e.g., PID, Name, CPU).
+
+Calculate CPU Usage: Implement the logic to sample CPU times and display a real-time CPU % for each process.
+
+Add User Column: Parse /etc/passwd or use getpwuid() to map process UIDs to user names.
+
+⚙️ Code Overview
+
+The program works by reading and parsing plain text files from the /proc directory in a loop:
 
 /proc/meminfo: Used to get system-wide memory statistics (MemTotal, MemFree).
 
@@ -85,4 +105,4 @@ The program works by reading and parsing plain text files from the /proc directo
 
 /proc/[PID]/cmdline: Read to get the full command that started the process.
 
-All data is collected, stored in simple structs, sorted using std::sort, and then printed to the console before the screen is cleared and the loop repeats.
+All data is collected, stored in simple structs, sorted using std::sort, and then printed to the console before the loop repeats.
