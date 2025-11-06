@@ -1,108 +1,89 @@
-💻 Simple Linux System Monitor
+💻 Simple Linux System Monitor 🚀
 
-A basic, read-only system monitoring tool written in C++ for Linux. It mimics some of the core functionality of the top command by reading data directly from the /proc filesystem.
+📊 Monitor. Analyze. Optimize. A lightweight, terminal-based system monitor built with C++—featuring real-time stats, process sorting, and zero external dependencies! 🐧⚡
 
 🎯 Objective
 
 The goal of this project is to create a lightweight, terminal-based utility that provides a real-time, at-a-glance overview of system memory, load, and the most resource-intensive processes.
 
-✨ Features
+✨ Core Features
 
-System Overview: Displays real-time information on:
+📈 Live System Vitals – Real-time memory usage, free memory, and system load averages!
 
-Total and used memory (in Gigabytes).
+📋 Process List – See PID, Name, State, and Memory (VmRSS) for the top 25 processes!
 
-Free memory (in Gigabytes).
+💾 Memory-First Sorting – Automatically shows the most memory-hungry processes at the top!
 
-System load averages (1, 5, and 15-minute intervals).
+⏱️ Real-time Updates – Refreshes every 2 seconds to keep you in the loop!
 
-Process List: Lists the top 25 running processes with:
+🛠️ Tech Stack & Tools
 
-Process ID (PID)
+🐧 Linux – Built for and runs exclusively on the Linux /proc filesystem.
 
-Process Name
+⚙️ C++ – Written in standard C++11.
 
-State (e.g., 'R' for running, 'S' for sleeping)
+📁 ProcFS – All data is read directly from /proc (no external libraries!).
 
-Memory Usage (VmRSS in Megabytes)
+⌨️ Terminal UI – A classic, lightweight console interface.
 
-The full command that launched the process.
+⚠️ The Fine Print (Limitations)
 
-Sorting: Automatically sorts the process list by memory usage (VmRSS) in descending order, showing the most memory-intensive processes first.
+This is a simplified educational tool. For a full-featured monitor, tools like htop are recommended.
 
-Real-time Updates: The display automatically refreshes every 2 seconds.
+🐧 Linux Only: This tool reads /proc and will not work on Windows or macOS.
 
-⚠️ Limitations
+👀 Read-Only: You can look, but you can't touch! (No killing processes, changing sorting, or scrolling... yet!)
 
-This is a simplified educational tool. For a full-featured and stable monitor, tools like htop or ncurses-based applications are recommended.
+📉 No Real-time CPU%: This feature is on the future goals list!
 
-Linux Only: It relies entirely on the Linux-specific /proc filesystem and will not compile or run on Windows or macOS.
+👻 Flicker-Warning: Uses system("clear") which can cause flickering. A ncurses UI would fix this!
 
-Read-Only & Non-Interactive: You cannot interact with the monitor (e.g., kill processes, change sorting, scroll, or select items).
-
-No Real-time CPU%: Calculating real-time CPU percentage requires sampling process and system CPU times at two different intervals and finding the difference. This functionality is omitted for simplicity.
-
-Basic UI: The tool uses system("clear") to refresh the screen, which is inefficient and can cause flickering. A more advanced tool would use a library like ncurses for a stable, flicker-free terminal UI.
-
-📋 Requirements
-
-A Linux-based operating system.
-
-A C++ compiler (e.g., g++).
-
-🚀 How to Compile and Run
+🚀 Get it Running
 
 Create the file:
-Open your terminal and use a text editor like nano to create the file:
 
 nano system_monitor.cpp
 
 
-Paste the C++ code from system_monitor.cpp into this file. Save and exit (Ctrl+O to save, Ctrl+X to exit).
+(Paste the C++ code from system_monitor.cpp into this file, then save & exit)
 
-Compile the program:
-In the same terminal, run the following command to compile the code. This creates an executable file named monitor.
+Compile it:
 
 g++ system_monitor.cpp -o monitor -std=c++11
 
 
-Run the monitor:
-Execute the compiled program:
+Run it:
 
 ./monitor
 
 
-Exit the monitor:
-Press Ctrl+C in the terminal to stop the program.
+Stop it:
+Press Ctrl+C in the terminal.
 
-🔮 Future Improvements
+🔮 Level Up! (Future Goals)
 
 This simple tool could be expanded with more advanced features:
 
-Implement ncurses: Replace system("clear") with the ncurses library for a smooth, flicker-free, and interactive UI.
+🎨 UI Overhaul – Integrate ncurses for a smooth, flicker-free, and interactive dashboard!
 
-Add Interactivity:
+🖱️ Full Interactivity – Add process killing, new sorting options (by CPU, PID), and scrolling!
 
-Allow killing processes by entering a PID.
+🧠 CPU Stats – Implement the logic to sample CPU times and display a real-time CPU % for each process.
 
-Allow sorting by different columns (e.g., PID, Name, CPU).
+🧑 User Display – Show which user is running each process.
 
-Calculate CPU Usage: Implement the logic to sample CPU times and display a real-time CPU % for each process.
+⚙️ How it Works
 
-Add User Column: Parse /etc/passwd or use getpwuid() to map process UIDs to user names.
+The monitor loops every 2 seconds, reading and parsing plain text files:
 
-⚙️ Code Overview
+📄 /proc/meminfo - For global memory stats.
 
-The program works by reading and parsing plain text files from the /proc directory in a loop:
+📄 /proc/loadavg - For system load.
 
-/proc/meminfo: Used to get system-wide memory statistics (MemTotal, MemFree).
+📁 /proc/[PID]/ - Scans all process directories for:
 
-/proc/loadavg: Used to get the system load averages.
+/proc/[PID]/status (Name, State, VmRSS)
 
-/proc/[PID]/: The program scans the /proc directory for subdirectories named only with numbers. Each number is a Process ID (PID).
+/proc/[PID]/cmdline (The full command)
 
-/proc/[PID]/status: Read to find the process Name, State, and VmRSS (memory usage).
-
-/proc/[PID]/cmdline: Read to get the full command that started the process.
-
-All data is collected, stored in simple structs, sorted using std::sort, and then printed to the console before the loop repeats.
+📢 Stay Tuned! Feel free to contribute, fork, or suggest improvements!
