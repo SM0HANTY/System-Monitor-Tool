@@ -14,7 +14,7 @@
  * Limitations (for simplicity):
  * - No real-time CPU % calculation (which requires diffing values over time).
  * - No user input or interactivity (like killing processes or changing sort order).
- * A full implementation would use a library like ncurses.
+ *   A full implementation would use a library like ncurses.
  * - User name is not included (requires parsing /etc/passwd).
  */
 
@@ -136,51 +136,69 @@ bool compareByMem(const ProcessInfo& a, const ProcessInfo& b) {
     return a.vmrss_kb > b.vmrss_kb;
 }
 
-// Main display function
+// Enhanced UI display function
 void display(const SystemInfo& sys, std::vector<ProcessInfo>& processes) {
-    // Clear the screen
-    system("clear");
+    system("clear");  // Clear screen
 
-    // Display System Info
-    std::cout << "--- System Monitor (Linux) ---" << std::endl;
-    std::cout << "Memory: " << std::fixed << std::setprecision(2)
-              << (sys.total_mem_kb - sys.free_mem_kb) / 1024.0 / 1024.0 << "G / "
-              << sys.total_mem_kb / 1024.0 / 1024.0 << "G Used"
-              << " (" << sys.free_mem_kb / 1024 / 1024.0 << "G Free)" << std::endl;
-    std::cout << "Load Avg (1, 5, 15 min): " << sys.load_avg << std::endl;
-    std::cout << "Total Processes: " << processes.size() << std::endl;
-    std::cout << std::endl;
+    // Top border
+    std::cout << "+" << std::string(86, '-') << "+" << std::endl;
 
-    // Display Process List Header
-    std::cout << std::setw(8) << std::left << "PID"
-              << std::setw(20) << std::left << "NAME"
-              << std::setw(4) << std::left << "S"
-              << std::setw(12) << std::right << "MEM (MB)"
-              << "  " << std::left << "COMMAND" << std::endl;
-    std::cout << std::string(80, '-') << std::endl;
+    // Title, centered
+    std::string title = "--- System Monitor (Linux) ---";
+    int pad = (86 - title.length()) / 2;
+    std::cout << "|" << std::string(pad, ' ') << title << std::string(86 - pad - title.length(), ' ') << "|" << std::endl;
 
-    // Sort processes
+    // Empty line
+    std::cout << "|" << std::string(86, ' ') << "|" << std::endl;
+
+    // System Summary
+    std::cout << "| Memory: "
+        << std::fixed << std::setprecision(2)
+        << std::setw(7) << ((sys.total_mem_kb - sys.free_mem_kb)/1024.0/1024.0) << "G / "
+        << std::setw(7) << (sys.total_mem_kb/1024.0/1024.0) << "G Used"
+        << " (" << std::setw(6) << (sys.free_mem_kb/1024.0/1024.0) << "G Free)"
+        << std::setw(23) << " "
+        << "Load Avg (1,5,15 min): " << std::setw(12) << sys.load_avg
+        << " |" << std::endl;
+
+    std::cout << "| Total Processes: " << std::setw(67) << processes.size() << " |" << std::endl;
+
+    // Empty line
+    std::cout << "|" << std::string(86, ' ') << "|" << std::endl;
+
+    // Table header for processes
+    std::cout << "| "
+        << std::setw(8) << std::left << "PID"
+        << std::setw(20) << std::left << "NAME"
+        << std::setw(4) << std::left << "S"
+        << std::setw(12) << std::right << "MEM (MB)"
+        << "  " << std::setw(36) << std::left << "COMMAND"
+        << " |" << std::endl;
+    std::cout << "|" << std::string(86, '-') << "|" << std::endl;
+
+    // Sort and display
     std::sort(processes.begin(), processes.end(), compareByMem);
-
-    // Display top processes (e.g., first 25)
     int count = 0;
     for (const auto& proc : processes) {
         if (count++ >= 25) break;
+        std::string name_short = proc.name.length() > 18 ? proc.name.substr(0, 18) + ".." : proc.name;
+        std::string cmd_short = proc.cmdline.length() > 34 ? proc.cmdline.substr(0, 34) + "..." : proc.cmdline;
 
-        // Truncate long names and commands for display
-        std::string name_short = proc.name;
-        if (name_short.length() > 18) name_short = name_short.substr(0, 18) + "..";
-
-        std::string cmd_short = proc.cmdline;
-        if (cmd_short.length() > 40) cmd_short = cmd_short.substr(0, 40) + "...";
-        
-        std::cout << std::setw(8) << std::left << proc.pid
-                  << std::setw(20) << std::left << name_short
-                  << std::setw(4) << std::left << proc.state
-                  << std::setw(11) << std::right << std::fixed << std::setprecision(1) << (proc.vmrss_kb / 1024.0)
-                  << "M"
-                  << "  " << std::left << cmd_short << std::endl;
+        std::cout << "| "
+            << std::setw(8) << std::left << proc.pid
+            << std::setw(20) << std::left << name_short
+            << std::setw(4) << std::left << proc.state
+            << std::setw(11) << std::right << std::fixed << std::setprecision(1) << (proc.vmrss_kb / 1024.0) << "M"
+            << "  " << std::setw(36) << std::left << cmd_short
+            << " |" << std::endl;
     }
+
+    while (count++ < 25) {
+        std::cout << "| " << std::setw(84) << " " << " |" << std::endl;
+    }
+
+    // Bottom border
+    std::cout << "+" << std::string(86, '-') << "+" << std::endl;
 }
 
 // Helper to check if a string is all digits
@@ -193,7 +211,7 @@ int main() {
         SystemInfo sys = getSystemInfo();
         std::vector<ProcessInfo> processes;
 
-        // Read /proc directory to find all process IDs
+        // Read /proc directory for process IDs
         DIR* proc_dir = opendir("/proc");
         if (proc_dir == NULL) {
             std::cerr << "Error: Could not open /proc" << std::endl;
